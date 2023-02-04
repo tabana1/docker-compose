@@ -1,8 +1,21 @@
 version: "3.9"
 services:
-  web:
-    build: .
-    ports:
-      - "8000:5000"
-  redis:
-    image: "redis:alpine"
+  Php-apache-environment:
+        build: php
+        expose:
+            - 9000
+        volumes:
+            - ./php/src:/var/www/html/
+        ports:
+            - "80:8000"
+  apache:
+        image: php:8.0-apache:latest
+        args:
+            - PHP_SOCKET=php:9000
+        volumes:
+            - ./php/www:/var/www/html
+        ports:
+            - 80:80
+            - 443:443
+        links:
+            - php
