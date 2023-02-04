@@ -1,21 +1,30 @@
 version: "3.9"
 services:
-  Php-apache-environment:
-        build: php
-        expose:
-            - 9000
-        volumes:
-            - ./php/src:/var/www/html/
+ php:
+    build: 
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - 3000:80
+    volumes:
+      - ./src:/var/www/html/
+      
+db:
+        image: mysql
+        command: --default-authentication-plugin=mysql_native_password
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: example
+        volumes: 
+            - sqlData:/var/lib/mysql
+    
+adminer:
+        image: adminer
+        restart: always
         ports:
-            - "80:8000"
-  apache:
-        image: php:8.0-apache:latest
-        args:
-            - PHP_SOCKET=php:9000
-        volumes:
-            - ./php/www:/var/www/html
-        ports:
-            - 80:80
-            - 443:443
-        links:
-            - php
+            - 8080:8080
+
+
+volumes: 
+    sqlData:
+        
